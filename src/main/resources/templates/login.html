@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="Bookmark" href="/img/favicon.ico">
+    <!--jquery-->
+    <!--    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <script src="js/jquery.min.js"></script>
+    <!--引入bootstrap-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+    <!--引入bootstrap-->
+    <script src="js/myjs.js"></script>
+    <style>
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+<div class="container" style="position: relative;top: 15rem">
+    <form id="login_form" role="form">
+        <fieldset>
+            <legend class="form_center">用户登录</legend>
+            <div class="form-group has-feedback form_center">
+                <label for="email">邮箱</label>
+                <input id="email" type="email" class="form-control" placeholder="请输入邮箱" maxlength="30"
+                       onkeyup="this.value=this.value.replace(/\\s+/g,'')">
+                <span class="remove glyphicon glyphicon-remove form-control-feedback"
+                      style="pointer-events: unset;cursor: pointer"></span>
+            </div>
+            <div class="form-group has-feedback form_center">
+                <label for="password">密码</label>
+                <input id="password" type="password" class="form-control" placeholder="请输入密码" maxlength="20"
+                       onkeyup="this.value=this.value.replace(/\\s+/g,'')">
+                <span class="remove glyphicon glyphicon-remove form-control-feedback"
+                      style="pointer-events: unset;cursor: pointer"></span>
+            </div>
+            <div class="form-group has-feedback form_center">
+                <input type="button" class="btn btn-default" value="登录" onclick="LoginFormSubmit()">
+                <input id="reset_login" type="reset" class="btn btn-default" value="清空">
+                <!--                    <input type="button" class="btn btn-default" value="注册" onclick="toRegister()">-->
+                <a style="cursor: pointer" onclick="toRegister()">没有账号?去注册</a>
+            </div>
+        </fieldset>
+    </form>
+</div>
+</body>
+<script src="js/particles.min.js" type="text/javascript"></script>
+<script src="js/app.js" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        if (getCookie("email") != null && getCookie("email") != 0) {
+            toHomepage()
+        }
+    })
+    // var pattern = /[1-9][0-9]{4,}@qq.com/;
+    $(".remove:eq(1)").click(function () {
+        $("#password").val('');
+        $("#password").focus();
+    })
+    $(".remove:eq(0)").click(function () {
+        $("#email").val('');
+        $("#email").focus();
+    })
+    $("#reset_login").click(function () {
+        $(".ok:eq(0)").css({display: 'none'});
+        $(".ok:eq(1)").css({display: 'none'});
+        $("#email").focus();
+    })
+    $(document).keydown(function (event) {
+        if (event.keyCode == 13) {
+            LoginFormSubmit();
+        }
+    });
+
+    function LoginFormSubmit() {
+        if ($("#password").val().length < 6) {
+            alert('密码长度小于6');
+            return;
+        }
+        // if (!pattern.test($("#email").val()))
+        // {
+        //     alert('邮箱格式错误')
+        //     return;
+        // }
+        var user = {
+            "password": $("#password").val(),
+            "email": $("#email").val(),
+        }
+        $.ajax({
+            url: '/login/submit',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            success: function (data) {
+                if (data == 101) {
+                    window.open('/homepage', '_self')
+                } else if (data == 102) {
+                    alert('该邮箱未注册');
+                } else if (data == 103) {
+                    alert('密码错误');
+                }
+            }
+        })
+    }
+</script>
+</html>

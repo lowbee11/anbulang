@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>send</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+        @keyframes xuanz {
+            0% {
+                transform: rotateY(0deg) rotatex(15deg);
+            }
+            100% {
+                transform: rotateY(360deg) rotatex(15deg);
+            }
+        }
+
+        .wt {
+            perspective: 800px;
+        }
+
+        .d1 {
+            transform-style: preserve-3d;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 400px auto;
+            animation: xuanz 10s infinite linear;
+        }
+
+        .d1 div {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .d1 div:nth-child(1) {
+            transform: translatez(-100px);
+            background: url(img/profile/default.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(2) {
+            transform: rotateY(90deg) translatez(-100px);
+            background: url(img/profile/default.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(3) {
+            transform: rotateY(90deg) translatez(100px);
+            background: url(img/profile/default.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(4) {
+            transform: rotatex(-90deg) translatez(100px);
+            background: url(img/profile/default.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(5) {
+            transform: rotatex(-90deg) translatez(-100px);
+            background: url(img/profile/default.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(6) {
+            transform: translatez(100px);
+            background: url(img/profile/default.png) 0 -10PX /cover;
+        }
+
+        .d1 div:nth-child(7), div:nth-child(8), div:nth-child(9), div:nth-child(10), div:nth-child(11), div:nth-child(12) {
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -150px;
+            margin-top: -150px;
+            opacity: 0.3;
+            transition: transform 1s;
+        }
+
+        .d1 div:nth-child(7) {
+            transform: translatez(-150px);
+            background: url(img/profile/82910218_p0.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(8) {
+            transform: rotateY(90deg) translatez(-150px);
+            background: url(img/profile/82910218_p0.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(9) {
+            transform: rotateY(90deg) translatez(150px);
+            background: url(img/profile/82910218_p0.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(10) {
+            transform: rotatex(-90deg) translatez(150px);
+            background: url(img/profile/82910218_p0.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(11) {
+            transform: rotatex(-90deg) translatez(-150px);
+            background: url(img/profile/82910218_p0.png) 0 -50PX /cover;
+        }
+
+        .d1 div:nth-child(12) {
+            transform: translatez(150px);
+            background: url(img/profile/82910218_p0.png) 0 -10PX /cover;
+        }
+
+        body:hover div:nth-child(7) {
+            transform: translatez(-300px) scale(1.2);
+            opacity: 0.8;
+        }
+
+        .wt:hover div:nth-child(8) {
+            transform: rotateY(90deg) translatez(-300px) scale(1.2);
+            opacity: 0.8;
+        }
+
+        .wt:hover div:nth-child(9) {
+            transform: rotateY(90deg) translatez(300px) scale(1.2);
+            opacity: 0.8;
+        }
+
+        .wt:hover div:nth-child(10) {
+            transform: rotatex(-90deg) translatez(300px) scale(1.2);
+            opacity: 0.8;
+        }
+
+        .wt:hover div:nth-child(11) {
+            transform: rotatex(-90deg) translatez(-300px) scale(1.2);
+            opacity: 0.8;
+        }
+
+        .wt:hover div:nth-child(12) {
+            transform: translatez(300px) scale(1.2);
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+<body>
+<h1 id="time">未开始</h1>
+<div class="wt">
+    <div class="d1">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+</body>
+<script>
+    var sum = 0;
+
+    function send() {
+        $.ajax({
+            url: 'https://autumnfish.cn/captcha/sent?phone=15328203713',
+            type: 'GET',
+            success: function (data) {
+                console.log(sum++)
+                $("#time").html("次数:" + sum)
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        setInterval(send, 70000);
+    })
+</script>
+</html>

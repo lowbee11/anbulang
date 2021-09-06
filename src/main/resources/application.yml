@@ -1,0 +1,45 @@
+server:
+  port: 8081
+  tomcat:
+    max-connections: 8192
+spring:
+  servlet:
+    multipart:
+      max-request-size: 200MB
+      max-file-size: 200MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.108.205.96:8306/web?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 262425
+    dbcp2:
+      initial-size: 5
+      max-idle: 100
+      min-idle: 5
+      max-wait-millis: 3000
+      test-on-borrow: true
+      test-on-return: false
+      test-while-idle: true
+      validation-query: SELECT 1
+      time-between-eviction-runs-millis: 30000
+      soft-min-evictable-idle-time-millis: 1800000
+      num-tests-per-eviction-run: 3
+      remove-abandoned-timeout: 180
+      pool-prepared-statements: true
+      max-open-prepared-statements: 15
+      hikari:
+        maximum-pool-size: 12 #最大连接数，小于等于0会被重置为默认值10；大于零小于1会被重置为minimum-idle的值
+        connection-timeout: 60000  #连接超时时间:毫秒，小于250毫秒，否则被重置为默认值30秒
+        minimum-idle: 10  #最小空闲连接，默认值10，小于0或大于maximum-pool-size，都会重置为maximum-pool-size
+        idle-timeout: 500000  #空闲连接超时时间，默认值600000（10分钟），大于等于max-lifetime且max-lifetime>0，会被重置为0；不等于0且小于10秒，会被重置为10秒。
+        max-lifetime: 540000  #连接最大存活时间.不等于0且小于30秒，会被重置为默认值30分钟.设置应该比mysql设置的超时时间短
+        connection-test-query: SELECT 1    #连接测试查询
+  thymeleaf:
+    encoding: utf-8
+    mode: LEGACYHTML5
+    cache: false
+    servlet:
+      content-type: text/html
+#mybatis:
+#  mapper-locations: classpath:/mapper/*.xml
+#  type-aliases-package: com.example.entity

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>提问题</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="Bookmark" href="/img/favicon.ico">
+    <!--jquery-->
+    <!--    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <script src="js/jquery.min.js"></script>
+    <!--引入bootstrap-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+    <!--引入bootstrap-->
+    <script src="js/myjs.js"></script>
+    <style>
+        #profile:hover > .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="large-header" class="large-header">
+    <canvas id="demo-canvas" style="width: 100%;height: 100%"></canvas>
+</div>
+<div id="menu" class="container navbar navbar-default navbar-fixed-top" style="background-color: #d6e9c6">
+
+</div>
+<div style="position:absolute;top:10px;left: 0;right: 0">
+    <div class="form-group container table-bordered" style="margin-top: 7rem;">
+        <span style="font-size: 4rem;color: #67b168">下面是关于问题的几点建议:</span>
+        <div id="dan">
+            <marquee width=100% behavior=scroll direction=left scrollamount="+0.15*(50+(Math.random()*100))+" px
+                     vspace=5px loop=-1>
+                <span style="width:auto;border-radius:10px"></span>
+            </marquee>
+        </div>
+        <textarea id="question_text" autofocus="autofocus" placeholder="在这里填写你的问题，然后就可以发送啦" maxlength="200"
+                  style="font-size: 20px;height: 50%;width: 100%;resize: none;margin-top: 5rem">
+
+        </textarea>
+        <div>
+            <button id="send" class="btn btn-info">发送</button>
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/TweenLite.min.js"></script>
+<script src="js/EasePack.min.js"></script>
+<script src="js/rAF.js"></script>
+<script src="js/demo-1.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".whoActive:eq(1)").addClass('active')
+        $("#question_text").html('');
+        var $dan = $("#dan")
+        var br = $("<br>")
+        var marquee1 = $("<marquee width=100%  behavior=scroll direction=left scrollamount=" + 0.1 * (50 + (Math.random() * 100)) + "px vspace=5px loop=-1></marquee>");
+        var span1 = $("<span style=\"width=auto;border-radius: 10px;color: #8a6d3b;background-color: #e9cee2;border-radius: 3rem\">安不浪: 建议不要把问题说得太复杂嗷。</span>")
+        $dan.append(marquee1)
+        marquee1.append(span1);
+        // $dan.append(br)
+        var marquee4 = $("<marquee width=100%  behavior=scroll direction=left scrollamount=" + 0.1 * (50 + (Math.random() * 100)) + "px vspace=5px loop=-1></marquee>");
+        var span4 = $("<span style=\"width=auto;border-radius: 10px;font-size: 2rem;color: red\">冷风吹: 我明早必六点半起床</span>")
+        $dan.append(marquee4)
+        marquee4.append(span4);
+        var marquee2 = $("<marquee width=100%  behavior=scroll direction=left scrollamount=" + 0.1 * (50 + (Math.random() * 100)) + "px vspace=5px loop=-1></marquee>");
+        var span2 = $("<span style=\"width=auto;border-radius: 10px;color: #d43f3a\">静静: 想问什么都可以的啦，只要不是违法乱纪的问题！</span>")
+        $dan.append(marquee2)
+        marquee2.append(span2);
+        var marquee3 = $("<marquee width=100%  behavior=scroll direction=left scrollamount=" + 0.1 * (50 + (Math.random() * 100)) + "px vspace=5px loop=-1></marquee>");
+        var span3 = $("<span style=\"width=auto;border-radius: 10px;color: #985f0d\">2624250238@qq.com: 如果有什么问题要私聊，可以给我发邮件┗|｀O′|┛ 嗷~~</span>")
+        $dan.append(marquee3)
+        marquee3.append(span3);
+    })
+
+    function sendQuestion() {
+        if (getCookie("email") == null || getCookie("email") == 0) {
+            toLogin();
+        } else if ($.trim($("#question_text").val()) != '') {
+            var question = {
+                "email": getCookie("email"),
+                "question": $("#question_text").val()
+            }
+            $.ajax({
+                url: '/question/insert',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(question),
+                success: function (data) {
+                    toHomepage();
+                }
+            })
+        } else {
+            alert("请不要发送空问题")
+        }
+    }
+
+    $("#send").click(function () {
+        sendQuestion();
+    })
+    $(document).keydown(function (event) {
+        if (event.keyCode == 13) {
+            sendQuestion();
+        }
+    });
+</script>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的问题</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="Bookmark" href="/img/favicon.ico">
+    <!--jquery-->
+    <!--    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>-->
+    <script src="js/jquery.min.js"></script>
+    <!--引入bootstrap-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+    <!--引入bootstrap-->
+    <script src="js/myjs.js"></script>
+    <style>
+        #profile:hover > .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="large-header" class="large-header">
+    <canvas id="demo-canvas" style="width: 100%;height: 100%"></canvas>
+</div>
+<div id="menu" class="container navbar navbar-default navbar-fixed-top" style="background-color: #d6e9c6">
+
+</div>
+<div style="position:absolute;top:10px;left: 0;right: 0">
+    <div id="questions" class="container" style="margin-top: 6rem">
+
+    </div>
+</div>
+
+</body>
+<script src="js/TweenLite.min.js"></script>
+<script src="js/EasePack.min.js"></script>
+<script src="js/rAF.js"></script>
+<script src="js/demo-1.js"></script>
+<script>
+    var question_list;
+    var username_list = new Array();
+    var id;
+    var email;
+    var question;
+
+    function returnMyQuestion() {
+        $("#questions").html('')
+        $.ajax({
+            url: '/answer/select',
+            type: 'POST',
+            success: function (data) {
+                answer_list = data;
+                $.ajax({
+                    url: '/question/select',
+                    type: 'POST',
+                    success: function (data) {
+                        question_list = new Array();
+                        for (var i = 0; i < data.length; i++) {
+                            if (data[i].email == getCookie("email")) {
+                                question_list.push(data[i]);
+                            }
+                        }
+                        q_list = new Array(question_list.length);
+                        for (var i = 0; i < question_list.length; i++) {
+                            q_list[i] = 0;
+                            for (var j = 0; j < answer_list.length; j++) {
+                                if (question_list[i].id == answer_list[j].question_id) {
+                                    q_list[i]++;
+                                }
+                            }
+                        }
+                        for (var i = 0; i < q_list.length - 1; i++) {
+                            for (var j = i + 1; j < q_list.length; j++) {
+                                if (q_list[i] > q_list[j]) {
+                                    var temp = q_list[i];
+                                    q_list[i] = q_list[j];
+                                    q_list[j] = temp;
+                                    var temp2 = question_list[i];
+                                    question_list[i] = question_list[j];
+                                    question_list[j] = temp2;
+                                }
+                            }
+                        }
+                        var $root = $("#questions");
+                        var flag = 0;
+                        for (var i = question_list.length - 1; i >= 0; i--) {
+                            if (question_list[i].email == getCookie("email")) {
+                                flag++;
+                                var id = question_list[i].id;
+                                var email = question_list[i].email;
+                                var question = question_list[i].question;
+                                var div = $("<div class='table-bordered' style='padding: 1rem;margin: 1rem'></div>")
+                                $root.append(div)
+                                var div1 = $("<div></div>")
+                                var div2 = $("<div style='height: auto'></div>")
+                                var br = $("<br>")
+                                div.append(div1);
+                                div.append(div2);
+                                var span1 = $("<span style='color: #4cae4c ;font-size: 2.5rem;margin-left: 1rem;margin-right: 2rem;position: relative;top: 0.1rem'></span>")
+                                if (i == question_list.length - 1) {
+                                    span1.css({"color": "#d43f3a", "font-size": "4rem"});
+                                } else if (i == question_list.length - 2) {
+                                    span1.css({"color": "coral", "font-size": "3.5rem"});
+                                } else if (i == question_list.length - 3) {
+                                    span1.css({"color": "#8a6d3b", "font-size": "3rem"});
+                                }
+                                var span2 = $("<span style='cursor: pointer;font-size: 2rem' onclick='toAnswer(" + id + ",\"" + email + "\",\"" + question + "\")'></span>");
+                                var span3 = $("<span style='color: gray;margin-left: 4.5rem;font-size: 1.5rem'></span>")
+                                var username = null;
+                                for (var j = 0; j < username_list.length; j++) {
+                                    if (username_list[j].email == question_list[i].email) {
+                                        username = username_list[j].username;
+                                        break
+                                    }
+                                }
+                                span1.html(question_list.length - i)
+                                span2.html(question_list[i].question);
+                                span2.attr("title", question_list[i].question)
+                                var num = 0;
+                                for (var j = 0; j < answer_list.length; j++) {
+                                    if (answer_list[j].question_id == id) {
+                                        num++;
+                                    }
+                                }
+                                span3.html(num + "条回答")
+                                div2.append(span1);
+                                div2.append(span2);
+                                span2.append(br)
+                                span2.append(span3)
+                            }
+                        }
+                        if (flag == 0) {
+                            var span = $("<span style='font-size: 5rem;color: #d43f3a'>你的问题空空如也，快去提问吧!</span>")
+                            $root.append(span);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        // $(".whoActive:eq(0)").addClass('active')
+        getAnswer();
+        $.ajax({
+            url: '/username/select',
+            type: 'POST',
+            success: function (data) {
+                username_list = data
+                returnMyQuestion();
+            }
+        })
+    })
+    var answer_list = new Array();
+
+    function getAnswer() {
+        $.ajax({
+            url: '/answer/select',
+            type: 'POST',
+            data: {
+                'id': id
+            },
+            success: function (data) {
+                answer_list = data;
+            }
+        })
+    }
+
+    function toAnswer(id, email, question) {
+        this.id = id;
+        this.email = email;
+        this.question = question;
+        var $root = $("#questions");
+        $("#questions").html('');
+        var child = $("<div>\n" +
+            "      <button class=\"btn btn-info\" onclick='returnMyQuestion()'>返回</button>\n" +
+            "    </div>")
+        $root.append(child)
+        var div1 = $("<div class='table-bordered' style='padding: 1rem'></div>")
+        $root.append(div1);
+        var span1 = $("<span style='font-size: 3rem'></span>")
+        span1.html("问题id:" + id);
+        div1.append(span1)
+        var br = $("<br>")
+        var div2 = $("<div></div>")
+        div1.append(div2)
+        // var span2 = $("<span style='font-size: 2.5rem'></span>")
+        var span3 = $("<span style='font-size: 2.5rem'></span>")
+        var username = null;
+        for (var i = 0; i < username_list.length; i++) {
+            if (username_list[i].email == email) {
+                username = username_list[i].username;
+                break;
+            }
+        }
+        // span2.html("用户:"+username);
+        span3.html(question);
+        // div2.append(span2)
+        div2.append(br)
+        div2.append(span3);
+        var $root = $("#questions");
+        var flag = 0;
+        for (var i = answer_list.length - 1; i >= 0; i--) {
+            if (answer_list[i].question_id == id) {
+                flag++;
+                var div1 = $("<div class=\"table-bordered\" style=\"margin-top: 1rem;padding: 1rem\"></div>")
+                $root.append(div1);
+                var span1 = $("<span style='font-size: 2rem'></span>");
+                var span2 = $("<span style='font-size: 2rem'></span>");
+                var br = $("<br>")
+                var username = null;
+                for (var j = 0; j < username_list.length; j++) {
+                    if (username_list[j].email == answer_list[i].email) {
+                        username = username_list[j].username;
+                        break;
+                    }
+                }
+                span1.html("用户:" + username)
+                span2.html("回答:" + answer_list[i].answer)
+                div1.append(span1)
+                div1.append(br)
+                div1.append(span2)
+            }
+        }
+        if (flag == 0) {
+            var div1 = $("<div class=\"table-bordered\" style=\"margin-top: 1rem;padding: 1rem\">暂无回答</div>")
+            $root.append(div1);
+        }
+        // var d1 = $("<div class=\"form-group\" style=\"margin-top: 10rem\"></div>");
+        // $root.append(d1);
+        // var textarea = $("<textarea id=\"answer_text\" autofocus=\"autofocus\" placeholder=\"在这里填好你的回答，然后发送\" maxlength=\"500\" style=\"font-size: 20px;height: 50%;width: 100%;resize: none\"></textarea>")
+        // d1.append(textarea)
+        // var d2 = $("<div></div>")
+        // $root.append(d2)
+        // var btn = $("<button id=\"send\" class=\"btn btn-info\" onclick='send()'>发送</button>")
+        // d2.append(btn)
+        // $("#answer_text").html('');
+    }
+
+    function send() {
+        if (getCookie("email") == null || getCookie("email") == 0) {
+            toLogin();
+        } else if ($.trim($("#answer_text").val()) != '') {
+            var answer = {
+                "question_id": id,
+                "email": getCookie("email"),
+                "answer": $("#answer_text").val()
+            }
+            $.ajax({
+                url: '/answer/insert',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(answer),
+                success: function (data) {
+                    $.ajax({
+                        url: '/answer/select',
+                        type: 'POST',
+                        data: {
+                            'id': id
+                        },
+                        success: function (data) {
+                            answer_list = data;
+                            toAnswer(id, email, question)
+                        }
+                    })
+                }
+            })
+        } else {
+            alert("请不要发送空内容")
+        }
+    }
+</script>
+</html>
